@@ -1,0 +1,118 @@
+#include <dirent.h>
+
+void generateStatistics(const char *filename, const char *dir_path, int fd_output) {
+  char file_path[PATH_MAX];
+  snprintf(file_path, sizeof(file_path), "%s/%s", dir_path, filename);
+
+  int fd_input = open(file_path, O_RDONLY);
+  if (fd_input == -1) {
+    perror("Eroare la deschiderea fisierului");
+    return;
+  }
+
+  struct stat file_stat;
+  if (stat(file_path, &file_stat) == -1) {
+    perror("Eroare la obtinerea informatiilor despre fisier");
+    close(fd_input);
+    return;
+  }
+
+  char permissions[11];
+  char buffer[1024];
+  int n;
+
+  if (S_ISREG(file_stat.st_mode)) {
+    if (strstr(filename, ".bmp")) {
+      n = sprintf(buffer,
+                  "nume fisier: %s\n"
+                  "inaltime: %d\n"
+                  "lungime: %d\n"
+                  "dimensiune: %ld\n"
+                  "identificatorul utilizatorului: %d\n"
+                  "timpul ultimei modificari: %s\n"
+                  "contorul de legaturi: %ld\n"
+                  "drepturi de acces user: %s\n"
+                  "drepturi de acces grup: %s\n"
+                  "drepturi de acces altii: %s\n",
+                  filename, height, width, file_stat.st_size, file_stat.st_uid,
+                  modificare, file_stat.st_nlink,
+                  permissions + 1 , permissions + 4, permissions + 7);
+    } else {
+      n = sprintf(buffer,
+                  "nume fisier: %s\n"
+                  "dimensiune: %ld\n"
+                  "identificatorul utilizatorului: %d\n"
+                  "timpul ultimei modificari: %s\n"
+                  "contorul de legaturi: %ld\n"
+                  "drepturi de acces user: %s\n"
+                  "drepturi de acces grup: %s\n"
+                  "drepturi de acces altii: %s\n",
+                  filename, file_stat.st_size, file_stat.st_uid,
+                  modificare, file_stat.st_nlink,
+                  permissions + 1, permissions + 4, permissions + 7);
+    }
+  } else if (S_ISLNK(file_stat.st_mode)) {
+    n = sprintf(buffer,
+                "nume legatura: %s\n"
+                "dimensiune legatura: %ld\n"
+                "dimensiune fisier target: %ld\n"
+                "drepturi de acces user legatura: %s\n"
+                "drepturi de acces grup legatura: %s\n"
+                "drepturi de acces altii legatura: %s\n",
+                filename, file_stat.st_size,
+                (stat(file_path, &file_stat) == -1) ? -1 : file_stat.st_size,
+                permissions + 1, permissions + 4, permissions + 7);
+  } else if (S_ISDIR(file_stat.st_mode)) {
+    n = sprintf(buffer,
+                "nume director: %s\n"
+                "identificatorul utilizatorului: %d\n"
+                "drepturi de acces user: %s\n"
+                "drepturi de acces grup: %s\n"
+                "drepturi de acces altii: %s\n",
+                filename, file_stat.st_uid,
+                permissions + 1, permissions + 4, permissions + 7);
+  }
+
+  if (n >= 0 && n < sizeof(buffer)) {
+    if (write(fd_output, buffer, n) == -1) {
+      perror("Eroare la scrierea in fisierul de statistici");
+    } else {
+      printf("Scriere cu succes in fisierul de statistici.\n");
+    }
+  } else {
+    fprintf(stderr, "Eroare la formatarea șirului.\n");
+  }
+
+  close(fd_input);
+}
+
+int main(int argc, char *argv[]) {
+  if (argc != 2) {
+    printf("Usage: %s <director_intrare>\n", argv[0]);
+    exit(-1);
+  }
+
+  DIR *dir = opendir(argv[1]);
+  if (!dir) {
+    perror("Eroare la deschiderea directorului");
+    exit(-1);
+  }
+
+  int fd_output = open("statistica.txt", O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+  if (fd_output == -1) {
+    perror("Eroare la deschiderea fisierului de statistici");
+    return 1;
+  }
+
+  struct dirent *entry;
+  while ((entry = readdir(dir)) != NULL) {
+    if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+      generateStatistics(entry->d_name, argv[1], fd_output);
+    }
+  }
+
+  closedir(dir);
+  close(fd_output);
+
+  return 0;
+}

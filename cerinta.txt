@@ -1,0 +1,23 @@
+Sa se modifice programul din saptamana anterioare astfel incat acesta va primi ca și
+parametru calea către un director (în locul unei imagini) și prin urmare se va apela astfel:
+./program <director_intrare>
+Programul va trebui sa parcurga directorul dat ca parametru și va scrie în cadrul fișierului
+statistica.txt în funcție de tipul intrării curente astfel:
+- dacă este un fișier obișnuit cu extensia .bmp vor scrie informațiile de mai sus
+- dacă este un fișier obișnuit, dar fără extensia .bmp,va scrie aceleași informații
+ca și în cazul anterior, însă fără lungime și înălțime
+- dacă este o legatura simbolica ce indica spre un fișier obișnuit va scrie
+următoarele informații:
+nume legatura: nume
+dimensiune legatura: dimensiunea legaturii
+dimensiune fisier dimensiunea fisierului target
+drepturi de acces user legatura: RWX
+drepturi de acces grup legatura: R–-
+drepturi de acces altii legatura: ---
+- dacă este un director se vor scrie următoarele informații:
+nume director: director
+identificatorul utilizatorului: <user id>
+drepturi de acces user: RWX
+drepturi de acces grup: R–-
+drepturi de acces altii: ---
+- pentru orice alte cazuri nu se va scrie nimic în fișierul statistica.txt

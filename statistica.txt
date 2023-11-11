@@ -1,0 +1,28 @@
+Este un fisier cu extensia bmp
+nume fisier: poza.bmp
+inaltime: 1280
+lungime: 1920
+dimensiune: 7372938
+identificatorul utilizatorului: 1000
+timpul ultimei modificari: 12.11.2023
+contorul de legaturi: 1
+drepturi de acces user: W-RW-R--
+drepturi de acces grup: W-R--
+drepturi de acces altii: --
+
+Este un fisier obisnuit
+nume fisier: fisier.txt
+dimensiune: 11
+identificatorul utilizatorului: 1000
+timpul ultimei modificari: 12.11.2023
+contorul de legaturi: 1
+drepturi de acces user: W-RW-R--
+drepturi de acces grup: W-R--
+drepturi de acces altii: --
+
+Este un director
+nume director: subdirector
+identificatorul utilizatorului: 1000
+drepturi de acces user: WXRWXR-X
+drepturi de acces grup: WXR-X
+drepturi de acces altii: -X
